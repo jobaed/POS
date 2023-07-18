@@ -17,21 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 // Route::resource( '/users', UserController::class );
 
-
-
 // For Pages
-Route::get('/login', [UserController::class, 'loginPage']);
-Route::get('/registration', [UserController::class, 'regiPage']);
-Route::get('/otp', [UserController::class, 'otpPage']);
-Route::get('/verify', [UserController::class, 'verifyotpPage']);
-Route::get('/reset', [UserController::class, 'resetPassPage']);
-
+Route::get( '/login', [UserController::class, 'loginPage'] );
+Route::get( '/registration', [UserController::class, 'regiPage'] );
+Route::get( '/otp', [UserController::class, 'otpPage'] );
+Route::get( '/verify', [UserController::class, 'verifyotpPage'] );
+Route::get( '/reset', [UserController::class, 'resetPassPage'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
 
 // Dashboard
-Route::get('/dashboard', [UserController::class, 'dashboardPage']);
-
-
-
+Route::get( '/dashboard', [UserController::class, 'dashboardPage'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
 
 // For Api Call
 
@@ -48,5 +44,7 @@ Route::post( '/sendOTPCode', [UserController::class, 'SendOTPCode'] );
 Route::post( '/verifiedOTP', [UserController::class, 'VerifiedOTP'] );
 
 // TOken Verification
-Route::post( '/pass-reset', [UserController::class, 'ResetPass'] )
-    ->middleware( [TokenVerificationMiddleware::class] );
+Route::post( '/pass-reset', [UserController::class, 'ResetPass'] );
+
+// Log Out User 
+Route::get( '/logout', [UserController::class, 'logOut'] );

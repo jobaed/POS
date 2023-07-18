@@ -178,7 +178,7 @@ class UserController extends Controller {
             return response()->json( [
                 'status'  => 'failed',
                 'message' => 'Invallid Email',
-                'code' => '401'
+                'code'    => '401',
             ], 200 );
         }
 
@@ -196,28 +196,29 @@ class UserController extends Controller {
             return response()->json( [
                 'status'  => 'success',
                 'message' => 'Your Password Reset OTP Has been send',
-                
+
             ], 200 );
 
         } else {
             return response()->json( [
                 'status'  => 'failed',
                 'message' => 'Unauthorized',
-                'code' => '403',
-            ], 200);
+                'code'    => '403',
+            ], 200 );
         }
     }
 
     public function VerifiedOTP( Request $request ) {
         $validator = Validator::make( $request->all(), [
-            'otp' => 'required|min:6',
+            'otp' => 'required|min:6|max:6',
         ] );
 
         if ( $validator->fails() ) {
             return response()->json( [
                 'status'  => 'failed',
                 'message' => 'Invallid Input',
-            ], 403 );
+                'code'    => '403',
+            ], 200 );
         }
 
         $email = $request->input( 'email' );
@@ -236,38 +237,58 @@ class UserController extends Controller {
             return response()->json( [
                 'status'  => 'success',
                 'message' => 'OTP Varification Successfull',
-                'token'   => $token,
-            ], 200 );
+            ], 200 )->cookie( 'token', $token, 60 * 60 * 24 );
 
         } else {
             return response()->json( [
                 'status'  => 'failed',
-                'message' => 'Invallid Otp',
-            ], 403 );
+                'message' => 'Not Match',
+                'code'    => '404',
+            ], 200 );
         }
 
     }
 
     public function ResetPass( Request $request ) {
 
+        $validator = Validator::make( $request->all(), [
+            'password' => 'required|min:6',
+        ] );
+
+        if ( $validator->fails() ) {
+            return response()->json( [
+                'status'  => 'failed',
+                'message' => 'Invallid Input',
+                'code'    => '403',
+            ] );
+        }
+
         try {
-            $email = $request->header( 'email' );
+            $token = $request->cookie( 'token' );
             $password = $request->input( 'password' );
 
+            $email = JWTToken::VerifyToken( $token );
+
             User::where( 'email', '=', $email )->update( ['password' => $password] );
+            
 
             return response()->json( [
                 'status'  => 'success',
                 'message' => 'Request Success',
-            ], 200 );
+            ], 200 )->cookie('token','',-1);
 
         } catch ( Exception $e ) {
             return response()->json( [
                 'status'  => 'failed',
                 'message' => 'Something Went Wrong',
-            ], 401 );
+            ] );
         }
 
+    }
+
+
+    public function logOut(){
+        return redirect('/login')->cookie('token', '', -1);
     }
 
 }

@@ -33,6 +33,9 @@
 
             if (res.data['status'] === 'success') {
                 successToast(res.data['message']);
+
+                sessionStorage.setItem('email', email);
+
                 window.location.href="/verify";
             } else if (res.data['code'] === '401') {
                 errorToast("Please Enter Invallid Email");
