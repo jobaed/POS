@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helper\JWTToken;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
 use App\Mail\OTPMail;
 use App\Models\User;
 use Exception;
@@ -20,59 +18,6 @@ class UserController extends Controller {
      */
     public function index() {
         return "Index";
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     */
-    public function create() {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     */
-    public function store( StoreUserRequest $request ) {
-        // return $request->input();
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     */
-    public function show( User $user ) {
-        //
-    }
-
-    /**
-     *
-     *
-     * Show the form for editing the specified resource.
-     *
-     */
-    public function edit( User $user ) {
-        //
-    }
-
-    /**
-     *
-     *
-     * Update the specified resource in storage.
-     *
-     */
-    public function update( UpdateUserRequest $request, User $user ) {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     *
-     */
-    public function destroy( User $user ) {
-        //
     }
 
     // For Frontend Pages
@@ -91,8 +36,14 @@ class UserController extends Controller {
     public function resetPassPage(): View {
         return view( 'Frontend.pages.auth.reset-pass' );
     }
+
+    // Dashboard Pages
+
     public function dashboardPage(): View {
         return view( 'Frontend.pages.dashboard.dashboard' );
+    }
+    public function ProfilePage(): View {
+        return view( 'Frontend.pages.dashboard.userProfile' );
     }
 
     // For API Call
@@ -149,10 +100,11 @@ class UserController extends Controller {
             ], 200 );
         }
 
-        $count = User::where( $request->all() )->count();
-        if ( $count == 1 ) {
+        $count = User::where( $request->all() )->select( 'id' )->first();
 
-            $token = JWTToken::CreateToken( $request->email );
+        if ( $count !== null ) {
+
+            $token = JWTToken::CreateToken( $request->email, $count->id );
             return response()->json( [
                 'status'  => 'success',
                 'message' => 'User Login Successfull',
@@ -225,15 +177,15 @@ class UserController extends Controller {
         $otp = $request->input( 'otp' );
 
         $count = User::where( 'email', '=', $email )
-            ->where( 'otp', '=', $otp )->count();
+            ->where( 'otp', '=', $otp )->select( 'id' )->first();
 
-        if ( $count == 1 ) {
+        if ( $count !== null ) {
 
             // Update Otp
             User::where( 'email', '=', $email )->update( ['otp' => '0'] );
 
             // Create Reset Token
-            $token = JWTToken::CreateTokenForSetPassword( $request->email );
+            $token = JWTToken::CreateTokenForSetPassword( $request->email, $count->id );
             return response()->json( [
                 'status'  => 'success',
                 'message' => 'OTP Varification Successfull',
@@ -267,15 +219,16 @@ class UserController extends Controller {
             $token = $request->cookie( 'token' );
             $password = $request->input( 'password' );
 
-            $email = JWTToken::VerifyToken( $token );
+            $tokenInfo = JWTToken::VerifyToken( $token );
+            $email = $tokenInfo->userEmail;
+            //  return $email;
 
             User::where( 'email', '=', $email )->update( ['password' => $password] );
-            
 
             return response()->json( [
                 'status'  => 'success',
                 'message' => 'Request Success',
-            ], 200 )->cookie('token','',-1);
+            ], 200 )->cookie( 'token', '', -1 );
 
         } catch ( Exception $e ) {
             return response()->json( [
@@ -286,9 +239,69 @@ class UserController extends Controller {
 
     }
 
+    public function logOut() {
+        return redirect( '/login' )->cookie( 'token', '', -1 );
+    }
 
-    public function logOut(){
-        return redirect('/login')->cookie('token', '', -1);
+    // Get Profile Data
+    function UserProfile( Request $request ) {
+        $email = $request->header( 'email' );
+
+        $user = User::where( 'email', '=', $email )->first();
+
+        if ( $user !== null ) {
+            return response()->json( [
+                'status'  => 'success',
+                'message' => 'Request Successfull',
+                'data'    => $user,
+            ] );
+        } else {
+            return response()->json( [
+                'status'  => 'failed',
+                'message' => 'User Not Found',
+                'code'    => '404',
+            ] );
+        }
+    }
+
+    // User Profile update
+    function userUdate( Request $request ) {
+        $validator = Validator::make( $request->all(), [
+            'firstName' => 'required|string|max:150',
+            'lastName'  => 'required|string|max:150',
+            'password'  => 'required|min:6',
+            'mobile'    => 'required|max:15',
+        ] );
+
+        if ( $validator->fails() ) {
+            return response()->json( [
+                'status'  => 'failed',
+                'message' => 'Invallid Input',
+                'code'    => '403',
+            ] );
+        }
+
+        $email = $request->header( 'email' );
+        try {
+
+            User::where( 'email', '=', $email )->update( [
+                'firstName' => $request->input( 'firstName' ),
+                'lastName'  => $request->input( 'lastName' ),
+                'mobile'    => $request->input( 'mobile' ),
+                'password'  => $request->input( 'password' ),
+            ] );
+
+            return response()->json( [
+                'status'  => 'success',
+                'message' => 'User Update Successfull',
+            ], 200 );
+
+        } catch ( Exception $e ) {
+            return response()->json( [
+                'status'  => 'failed',
+                'message' => 'User Registration Failed',
+            ], 200 );
+        }
     }
 
 }

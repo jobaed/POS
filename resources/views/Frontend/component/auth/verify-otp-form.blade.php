@@ -71,7 +71,8 @@
                 email: sessionStorage.getItem('email'),
                 otp: otpInput
             });
-            console.log(res);
+            
+            // console.log(res);
             if (res.data['status'] === 'success') {
                 successToast("Your Password Changed");
                 window.location.href="/reset"
