@@ -52,10 +52,14 @@ class TodoController extends Controller {
     public function TodoList( Request $request ) {
 
         $user_id = $request->header( 'id' );
-        
+
         $data = Todo::with( 'user' )
             ->where( 'user_id', '=', $user_id )
             ->get();
+
+
+
+            asdfasdf
 
        
         if ( $data->count() == 0 ) {
