@@ -58,9 +58,6 @@ class TodoController extends Controller {
             ->get();
 
 
-
-            asdfasdf
-
        
         if ( $data->count() == 0 ) {
             return $this->error( 'No Data', 'No Data Found', '200' );
