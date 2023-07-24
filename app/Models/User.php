@@ -20,4 +20,10 @@ class User extends Model {
         'otp' => '0',
     ];
 
+
+
+    public function todos(){
+        return $this->hasMany(Todo::class);
+    }
+
 }

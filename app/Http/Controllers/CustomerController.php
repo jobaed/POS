@@ -90,6 +90,7 @@ class CustomerController extends Controller {
         if ( $data->count() == 0 ) {
             return $this->error( '', 'Customer Not Found', '200' );
         } else {
+            $data->delete();
             return $this->success( $data, 'Data Deleted Successfully', '200' );
         }
 

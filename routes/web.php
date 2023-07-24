@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\TodoController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -76,4 +77,25 @@ Route::post( '/update-customer', [CustomerController::class, 'UpdateCustomer'] )
 
 // Delete
 Route::post( '/delete-customer', [CustomerController::class, 'DeleteCustomer'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+
+
+// TODO Module
+
+// Create
+Route::post( '/create-todo', [TodoController::class, 'CreateToDo'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+
+// Read
+Route::get( '/list-todo', [TodoController::class, 'TodoList'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+// Update
+Route::post( '/update-todo', [TodoController::class, 'UpdateTodo'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+// Delete
+Route::post( '/delete-todo', [TodoController::class, 'DeleteTodo'] )
     ->middleware( [TokenVerificationMiddleware::class] );
