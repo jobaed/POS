@@ -31,7 +31,7 @@
 
 
 .side-nav-open {
-    padding-top: 70px;
+    padding-top: 85px;
     height: 100%;
     width: 240px;
     position: fixed;
@@ -110,7 +110,7 @@
 
 .side-bar-item{
     display: inline-block;
-    padding: 12px 5px 12px 5px;
+    padding: 12px 5px 12px 35px;
     width: 100% !important;
 }
 .side-bar-item:hover{
@@ -137,7 +137,7 @@
 }
 .side-bar-item-caption{
     font-family: 'Poppins', sans-serif ;
-    font-size: 13px;
+    font-size: 16px;
     margin-left: 5px;
     font-weight: 500;
     color: #363B64;

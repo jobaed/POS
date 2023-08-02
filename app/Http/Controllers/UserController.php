@@ -139,6 +139,7 @@ class UserController extends Controller {
 
         $count = User::where( 'email', '=', $email )->count();
         if ( $count == 1 ) {
+            
             // Send Email
             Mail::to( $email )->send( new OTPMail( $otp ) );
 

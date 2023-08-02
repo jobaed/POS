@@ -11,6 +11,12 @@ use Illuminate\Http\Request;
 class TodoController extends Controller {
 
     use HttpResponses;
+
+    public function showPage(){
+        return view('Frontend.pages.dashboard.todo');
+    }
+
+
     public function CreateToDo( Request $request ) {
         // return $request;
 
@@ -19,7 +25,7 @@ class TodoController extends Controller {
             $user_id = $request->header( 'id' );
             if ( is_null( $request->input( 'description' ) ) ) {
 
-                return Todo::create(
+                $data = Todo::create(
                     [
                         'user_id'     => $user_id,
                         'title'       => $request->input( 'title' ),
@@ -29,7 +35,7 @@ class TodoController extends Controller {
 
             } else {
 
-                return Todo::create(
+                $data = Todo::create(
                     [
 
                         'user_id'     => $user_id,
@@ -40,7 +46,7 @@ class TodoController extends Controller {
                 );
             }
 
-            // return $this->success( $data, 'Successfully Added ToDo', '200' );
+            return $this->success( $data, 'Successfully Added ToDo', '200' );
 
         } catch ( Exception $e ) {
             return $this->error( $e, 'Something Went Wrong', '200' );

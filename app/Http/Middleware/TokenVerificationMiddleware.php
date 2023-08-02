@@ -16,14 +16,14 @@ class TokenVerificationMiddleware {
     public function handle( Request $request, Closure $next ): Response{
 
         $token = $request->cookie( 'token' );
-        if ( $token === null ) {
+        if ( $token == null ) {
             return redirect( '/login' );
         } else {
             $result = JWTToken::VerifyToken( $token );
 
             if ( $result == 'Unauthorized' ) {
 
-                return redirect( '/login' );
+                return redirect('/login');
                 
             } else {
                 $request->headers->set( 'email', $result->userEmail );

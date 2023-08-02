@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
+use App\Models\Category;
+use App\Models\Product;
 use App\Traits\HttpResponses;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CustomerController extends Controller {
-
+class CategoryController extends Controller {
     use HttpResponses;
 
-
-    public function customerDash(){
-        return view('Frontend.pages.dashboard.customer');
+    public function categoryPage() {
+        return view( 'Frontend.pages.dashboard.category' );
     }
 
-
     // Create Customer
-    Public function CreateCustomer( Request $request ) {
+    Public function CreateCategory( Request $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'name'   => 'required|string|max:150',
-            'email'  => 'required|email',
-            'mobile' => 'required|max:15',
+            'name' => 'required|string|max:50',
         ] );
 
         if ( $validator->fails() ) {
@@ -33,10 +29,8 @@ class CustomerController extends Controller {
 
         try {
             $user_id = $request->header( 'id' );
-            $data = Customer::create( [
+            $data = Category::create( [
                 'name'    => $request->input( 'name' ),
-                'email'   => $request->input( 'email' ),
-                'mobile'  => $request->input( 'mobile' ),
                 'user_id' => $user_id,
             ] );
 
@@ -49,10 +43,11 @@ class CustomerController extends Controller {
     }
 
     // Show Customer
-    public function CustomerList( Request $request ) {
+    public function CategoryList( Request $request ) {
 
         $user_id = $request->header( 'id' );
-        $data = Customer::where( 'user_id', '=', $user_id )->get();
+        $data = Category::where( 'user_id', '=', $user_id )
+            ->get();
         if ( $data->count() == 0 ) {
             return $this->error( 'No Data', 'No Data Found', '200' );
         } else {
@@ -62,12 +57,10 @@ class CustomerController extends Controller {
     }
 
     // Update
-    public function UpdateCustomer( Request $request ) {
+    public function UpdateCategory( Request $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'name'   => 'required|string|max:150',
-            'email'  => 'required|email',
-            'mobile' => 'required|max:15',
+            'name' => 'required|string|max:50',
         ] );
 
         if ( $validator->fails() ) {
@@ -75,9 +68,9 @@ class CustomerController extends Controller {
         }
 
         $user_id = $request->header( 'id' );
-        $customer = $request->input( 'id' );
+        $category_id = $request->input( 'id' );
 
-        $data = Customer::where( 'id', '=', $customer )->where( 'user_id', '=', $user_id );
+        $data = Category::where( 'id', '=', $category_id )->where( 'user_id', '=', $user_id );
 
         if ( $data->count() == 0 ) {
 
@@ -86,9 +79,7 @@ class CustomerController extends Controller {
         } else {
 
             $data = $data->update( [
-                'name'   => $request->input( 'name' ),
-                'email'  => $request->input( 'email' ),
-                'mobile' => $request->input( 'mobile' ),
+                'name' => $request->input( 'name' ),
             ] );
             return $this->success( $data, 'Successfully Updated', '200' );
 
@@ -97,19 +88,26 @@ class CustomerController extends Controller {
     }
 
     // Delete
-    public function DeleteCustomer( Request $request ) {
+    public function DeleteCategory( Request $request ) {
 
         $user_id = $request->header( 'id' );
-        $customer = $request->input( 'id' );
+        $category_id = $request->input( 'id' );
 
-        $data = Customer::where( 'id', '=', $customer )->where( 'user_id', '=', $user_id );
+        $data = Category::where( 'id', '=', $category_id )->where( 'user_id', '=', $user_id );
         if ( $data->count() == 0 ) {
+
             return $this->error( '', 'Customer Not Found', '200' );
         } else {
-            $data->delete();
-            return $this->success( $data, 'Data Deleted Successfully', '200' );
+            $dataProduct = Product::where( 'category_id', '=', $category_id )->get();
+
+            if ( $dataProduct->count() != 0 ) {
+                return $this->error( null, 'This Category Have Many Products. You Can\'t Delete.', '200' );
+            } else {
+                $data->delete();
+                return $this->success( $data, 'Data Deleted Successfully', '200' );
+            }
+
         }
 
     }
-
 }

@@ -42,3 +42,17 @@ a:hover {
   box-shadow: none !important;
 }
 
+#tableData_filter{
+  text-align: end;
+    padding-right: 31px;
+}
+.custom-select{
+  margin-bottom: 13px;
+}
+
+.label, .form-label{
+  margin: 1rem 0 0.5rem 0 !important;
+}
+td{
+  vertical-align: middle;
+}
