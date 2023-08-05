@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionalMailController;
 use App\Http\Controllers\TodoController;
@@ -227,4 +228,21 @@ Route::post( '/delete-product', [ProductController::class, 'DeleteProduct'] )
 Route::get('/send-mail',[PromotionalMailController::class, 'promotionlMailPage']);
 
 Route::post('/prom-mail', [PromotionalMailController::class, 'sendPromotionalMail'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+
+
+
+// Invoice Report
+
+// Create Invoice
+Route::post('/create-invoice', [InvoiceController::class, 'createInvoice'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+    
+// Select Invoice
+Route::get('/list-invoice', [InvoiceController::class, 'invoiceSelect'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+//  Invoice Details
+Route::get('/details-invoice', [InvoiceController::class, 'invoiceDetails'])
     ->middleware( [TokenVerificationMiddleware::class] );
