@@ -8,7 +8,7 @@
                 <div class="modal-body">
                     <div class="container">
                         <div class="row">
-                            <div class="col-12 p-1">
+                            <div class="col-12 p-1 createPWrapper">
 
                                 <input type="hidden" id="update_id" value="">
 
@@ -16,30 +16,46 @@
                                 <input type="text" class="form-control" id="productName" placeholder=":Burger">
 
                                 <label class="form-label">Catrgory *</label>
-                                <select id="catSelect" class="form-control">
-                                    <option value="">Select Catgory</option>
-                                </select>
+                                <div id="catBox">
+                                    <select id="catSelect" class="form-control">
+                                        <option value="">Select Catgory</option>
+                                    </select>
+                                </div>
 
                                 <label class="form-label">Price *</label>
                                 <input type="text" class="form-control" id="productPrice" placeholder="150.00">
 
+                                <div class="addUnitWrapper d-none" id="addUnit">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <input type="text" class="form-control" placeholder="You Can Add Option">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button><i class="fas fa-plus-circle"></i></button>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
                                 <label class="form-label">Unit *</label>
                                 <select id="productUnit" class="form-control">
+
                                     <option value="">Select Unit</option>
                                     <option value="KG">KG</option>
                                     <option value="PCS">PCS</option>
                                     <option value="LITER">LITER</option>
                                 </select>
 
-                                <div id="oldimgWrapper">
-                                    <label class="form-label">Old Image *</label>
-                                    <img src="" id="oldestImg" class="img-fluid" alt="">
-                                </div>
+                                <br />
+                                <img class="w-15" id="newImg" src="{{ asset('images/default.png') }}" />
+                                <br />
 
-                                <label class="form-label">Product Image *</label>
-                                <input type="file" accept="image/png, image/gif, image/jpeg" id="productImg"
-                                    class="form-control"
-                                    value="{{ asset('uploads/11-1690639466-featured-stovetop-burgers-recipe.jpg') }}">
+                                <label class="form-label">Product Image * <span
+                                        id="imageLabel">(Optional)</span></label>
+                                <input type="file" oninput="newImg.src=window.URL.createObjectURL(this.files[0])"
+                                    accept="image/png, image/gif, image/jpeg" id="productImg" class="form-control"
+                                    value="">
 
                             </div>
                         </div>
@@ -67,18 +83,15 @@
         e.preventDefault();
         $('#create-modal').modal('hide');
         document.getElementById('productName').value = '';
+        $("#newImg").attr('src', "images/default.png");
 
     });
 
-    $('#createProBtn').on('click', function() {
-        // let id = $(this).data('id');
-        // let Name = $(this).data('name');
-        // // console.log(Name);
-        // $(".catName").text(Name);
-        // $("#delete-modal").modal('show');
-        // $(".catID").html(id);
-        ("#oldimgWrapper").addClass("d-none");
-        ("#oldestImg").attr("src", "");;
+    $('#productUnit').on('click', function() {
+
+
+        // $('#addUnit').removeClass('d-none');
+
     });
 
 
@@ -87,10 +100,6 @@
         let update_id = $("#update_id").val();
 
         if (update_id == "") {
-
-            var OldImgDiv = document.getElementById('oldimgWrapper');
-            OldImgDiv.style.display = 'none';
-            OldImgDiv.src = '';
 
             let productName = document.getElementById('productName').value;
             let productCatrgory = document.getElementById('catSelect').value;
@@ -150,56 +159,58 @@
 
             let id = document.getElementById('update_id').value;
 
-            let productName = document.getElementById('productName').value;
-            let productCatrgory = document.getElementById('catSelect').value;
-            let productPrice = document.getElementById('productPrice').value;
-            let productUnit = document.getElementById('productUnit').value;
-            let productImg = document.getElementById('productImg');
-            if (productName.length === 0) {
-                errorToast("Product Name Required !")
-            } else if (productCatrgory.length === 0) {
-                errorToast("Product Category Required !")
-            } else if (productPrice.length === 0) {
-                errorToast("Product Price Required !")
-            } else if (productUnit.length === 0) {
-                errorToast("Product Unit Required !")
-            } else if (productImg.value.length === 0) {
-                errorToast("Product Price Required !")
-            } else {
-
-                $('#create-modal').modal('hide');
-
-                const imageFile = productImg.files[0];
 
 
-                const formData = new FormData();
-                formData.append('category_id', productCatrgory);
-                formData.append('name', productName);
-                formData.append('price', productPrice);
-                formData.append('unit', productUnit);
-                formData.append('img', imageFile);
+            // let productName = document.getElementById('productName').value;
+            // let productCatrgory = document.getElementById('catSelect').value;
+            // let productPrice = document.getElementById('productPrice').value;
+            // let productUnit = document.getElementById('productUnit').value;
+            // let productImg = document.getElementById('productImg');
+            // if (productName.length === 0) {
+            //     errorToast("Product Name Required !")
+            // } else if (productCatrgory.length === 0) {
+            //     errorToast("Product Category Required !")
+            // } else if (productPrice.length === 0) {
+            //     errorToast("Product Price Required !")
+            // } else if (productUnit.length === 0) {
+            //     errorToast("Product Unit Required !")
+            // } else if (productImg.value.length === 0) {
+            //     errorToast("Product Price Required !")
+            // } else {
 
-                try {
-                    showLoader();
-                    const res = await axios.post("/create-product", formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    });
-                    hideLoader();
+            //     $('#create-modal').modal('hide');
 
-                    if (res.data.status == "success") {
-                        successToast('Product Added Successfull');
-                        $("#insertData").trigger("reset");
-                        await getList();
-                    } else if (res.data.status == "error") {
-                        errorToast(res.data.message)
-                    }
-                } catch (error) {
-                    console.error(error);
-                    errorToast(error)
-                }
-            }
+            //     const imageFile = productImg.files[0];
+
+
+            //     const formData = new FormData();
+            //     formData.append('category_id', productCatrgory);
+            //     formData.append('name', productName);
+            //     formData.append('price', productPrice);
+            //     formData.append('unit', productUnit);
+            //     formData.append('img', imageFile);
+
+            //     try {
+            //         showLoader();
+            //         const res = await axios.post("/create-product", formData, {
+            //             headers: {
+            //                 'Content-Type': 'multipart/form-data',
+            //             },
+            //         });
+            //         hideLoader();
+
+            //         if (res.data.status == "success") {
+            //             successToast('Product Added Successfull');
+            //             $("#insertData").trigger("reset");
+            //             await getList();
+            //         } else if (res.data.status == "error") {
+            //             errorToast(res.data.message)
+            //         }
+            //     } catch (error) {
+            //         console.error(error);
+            //         errorToast(error)
+            //     }
+            // }
         }
     });
 </script>

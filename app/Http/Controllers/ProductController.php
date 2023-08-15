@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
@@ -105,7 +105,7 @@ class ProductController extends Controller {
 
                 // Dete Old File
                 $old_img = $request->input( 'img' );
-                File::delete($old_img);
+                File::delete( $old_img );
 
                 $data = $data->update( [
                     'category_id' => $request->input( 'category_id' ),
@@ -134,16 +134,30 @@ class ProductController extends Controller {
     public function DeleteProduct( Request $request ) {
 
         $user_id = $request->header( 'id' );
-        $product = $request->input( 'id' );
+        $product_id = $request->input( 'id' );
+        $filePath = $request->input( 'file_path' );
 
-        $data = Product::where( 'id', '=', $product )->where( 'user_id', '=', $user_id );
-        if ( $data->count() == 0 ) {
-            return $this->error( '', 'Product Not Found', '200' );
+        $product = Product::where( "id", "=", $product_id )->where( "user_id", "=", $user_id )->first();
+
+        if ( $product->count() != 0 ) {
+            $product->delete();
+            File::delete( $filePath );
+            return $this->success( $product, 'Product Delete Successfull', '200' );
         } else {
-            $data->delete();
-            return $this->success( $data, 'Data Deleted Successfully', '200' );
+            return $this->error( "", "Product Not Found", "200" );
         }
 
+    }
+
+    // Single Product Get
+    public function singleProduct( Request $request ) {
+        $user_id = $request->header( 'id' );
+
+        $product_id = $request->input( 'id' );
+
+        $product = Product::where( 'user_id', '=', $user_id )->where( 'id', '=', $product_id )->first();
+
+        return $product;
     }
 
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\PromotionalMail;
-use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceProduct;
 use Exception;
@@ -76,7 +75,7 @@ class InvoiceController extends Controller {
             ->where( 'customer_id', '=', $customer_id )
             ->where( 'id', '=', $invoice_id )
             ->with( ['customer', 'invoiceProducts'] )
-            ->get(); 
+            ->get();
 
         // ALternative
         // $user_id = $request->header( 'id' );
@@ -89,6 +88,34 @@ class InvoiceController extends Controller {
         //     'invoice'  => $invoiceTotal,
         //     'product'  => $invoiceProduct,
         // );
+    }
+
+    function invoiceDelete( Request $request ) {
+        DB::beginTransaction();
+
+        try {
+
+            $user_id = $request->header( 'id' );
+            InvoiceProduct::where( 'invoice_id', $request->input( 'inv_id' ) )->delete();
+            Invoice::where( 'id', '=', $request->input( 'inv_id' ) )
+                ->where( 'user_id', '=', $user_id )
+                ->delete();
+
+            DB::commit();
+            return 1;
+
+        } catch ( Exception $e ) {
+            DB::rollBack();
+            return $e;
+        }
+    }
+
+
+    public function salePage(){
+        return view('Frontend.pages.dashboard.sale');
+    }
+    public function invoicePage(){
+        return view('Frontend.pages.dashboard.invoice');
     }
 
 }

@@ -14,6 +14,8 @@
     <link href="{{ asset('css/datatables.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/datatables-select.min.css') }}" rel="stylesheet" />
 
+    <link href="{{asset('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css')}}" rel="stylesheet" />
+
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
     <script src="{{ asset('js/axios.min.js') }}"></script>
@@ -65,7 +67,7 @@
     </nav>
 
 
-    <div id="sideNavRef" class="side-nav-open">
+    {{-- <div id="sideNavRef" class="side-nav-open">
 
         <a href="{{ url('/dashboard') }}" class="side-bar-item">
             <i class="fa fa-chevron-circle-right  text-dark"></i>
@@ -102,7 +104,7 @@
 
         <a href="#Getting-Started" class="side-bar-item">
             <i class="fa fa-chevron-circle-right  text-dark"></i>
-            <span class="side-bar-item-caption">Invoice</span>
+            <span class="side-bar-item-caption">Sale</span>
         </a>
 
         <a href="#Getting-Started" class="side-bar-item">
@@ -111,6 +113,57 @@
         </a>
 
 
+    </div> --}}
+
+
+    <div id="sideNavRef" class="side-nav-open">
+
+        <a href="{{url("/dashboard")}}" class="side-bar-item">
+            <i class="bi bi-graph-up"></i>
+            <span class="side-bar-item-caption">Dashboard</span>
+        </a>
+    
+        <a href="{{url("/customerDash")}}" class="side-bar-item">
+            <i class="bi bi-people"></i>
+            <span class="side-bar-item-caption">Customer</span>
+        </a>
+    
+        <a href="{{url("/categoriesDash")}}" class="side-bar-item">
+            <i class="bi bi-list-nested"></i>
+            <span class="side-bar-item-caption">Category</span>
+        </a>
+    
+        <a href="{{url("/productDash")}}" class="side-bar-item">
+            <i class="bi bi-bag"></i>
+            <span class="side-bar-item-caption">Product</span>
+        </a>
+
+        <a href="{{url("/todo")}}" class="side-bar-item">
+            <i class="bi bi-check2-circle"></i>
+            <span class="side-bar-item-caption">To Do </span>
+        </a>
+
+        <a href="{{url("/send-mail")}}" class="side-bar-item">
+            <i class="bi bi-envelope-check"></i>
+            <span class="side-bar-item-caption">Send Mail</span>
+        </a>
+    
+        <a href="{{url('/sale')}}" class="side-bar-item">
+            <i class="bi bi-currency-dollar"></i>
+            <span class="side-bar-item-caption">Create Sale</span>
+        </a>
+    
+        <a href="{{url('/invoicePage')}}" class="side-bar-item">
+            <i class="bi bi-receipt"></i>
+            <span class="side-bar-item-caption">Invoice</span>
+        </a>
+    
+        <a href="{{url('/reportPage')}}" class="side-bar-item">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            <span class="side-bar-item-caption">Report</span>
+        </a>
+    
+    
     </div>
 
 
@@ -119,7 +172,7 @@
     </div>
 
 
-
+    <script src="https://kit.fontawesome.com/0e5659ef6a.js" crossorigin="anonymous"></script>
     <script>
         function MenuBarClickHandler() {
             let sideNav = document.getElementById('sideNavRef');

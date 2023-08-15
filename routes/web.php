@@ -214,6 +214,10 @@ Route::post( '/update-product', [ProductController::class, 'UpdateCustomer'] )
 Route::post( '/delete-product', [ProductController::class, 'DeleteProduct'] )
     ->middleware( [TokenVerificationMiddleware::class] );
 
+// Single Product Get
+Route::post( '/singleProduct', [ProductController::class, 'singleProduct'] )
+    ->middleware( [TokenVerificationMiddleware::class] );
+
 
 
 
@@ -235,6 +239,13 @@ Route::post('/prom-mail', [PromotionalMailController::class, 'sendPromotionalMai
 
 // Invoice Report
 
+// Invoice Page
+Route::get('/sale',[InvoiceController::class,'salePage'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+
+Route::get('/invoicePage',[InvoiceController::class,'invoicePage'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+
 // Create Invoice
 Route::post('/create-invoice', [InvoiceController::class, 'createInvoice'])
     ->middleware( [TokenVerificationMiddleware::class] );
@@ -244,5 +255,8 @@ Route::get('/list-invoice', [InvoiceController::class, 'invoiceSelect'])
     ->middleware( [TokenVerificationMiddleware::class] );
 
 //  Invoice Details
-Route::get('/details-invoice', [InvoiceController::class, 'invoiceDetails'])
+Route::post('/details-invoice', [InvoiceController::class, 'invoiceDetails'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+//  Invoice Delete
+Route::post('/delete-invoice', [InvoiceController::class, 'invoiceDelete'])
     ->middleware( [TokenVerificationMiddleware::class] );

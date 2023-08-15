@@ -15,9 +15,9 @@
                 <table class="table" id="tableData">
                     <thead>
                         <tr class="bg-light">
+                            <th>ID</th>
                             <th>Icon</th>
                             <th>Name</th>
-                            <th>Category</th>
                             <th>Price</th>
                             <th>Unit</th>
                             <th>Action</th>
@@ -71,59 +71,87 @@
         tableData.DataTable().destroy();
         tableList.empty();
 
+        
+
 
         res.data['data'].forEach(function(item, index) {
             let row = `<tr>
+                    <td>${index+1}</td>
                     <td><img alt="" class="img-fluid" src="/${item['img_url']}"></td>
                     <td>${item['name']}</td>
-                    <td>${item.category['name']}</td>
                     <td>${item['price']}</td>
                     <td>${item['unit']}</td>
                     <td>
-                        <button data-id="${item['id']}" data-name="${item.name}" data-img="${item.img_url}"  class="btn edit btn-sm btn-outline-success" id="proEditBtn">Edit</button>
+                        <button data-id="${item['id']}" data-name="${item.name}"  class="btn edit btn-sm btn-outline-success" id="proEditBtn">Edit</button>
                         <button data-id="${item['id']}" data-name="${item.name}" class="btn delete btn-sm btn-outline-danger">Delete</button>
                     </td>
                 </tr>`;
             tableList.append(row);
-        })
+        });
 
 
-        $('.edit').on('click', function() {
+        $('.edit').on('click', async function() {
             let id = $(this).data('id');
-            let name = $(this).data('name');
-            let img = $(this).data('img');
+
+            let res = await axios.post('/singleProduct', {
+                id: id
+            });
 
 
-            $("#productName").val(name);
-            $("#oldestImg").attr('src', img);
+            $("#update_id").val(id);
+            $("#productName").val(res.data['name']);
+            let catId = res.data['category_id'];
+            let unit = res.data['unit'];
+            $("#productPrice").val(res.data['price']);
+            $("#productPrice").val(res.data['price']);
+            $("#newImg").attr('src', res.data['img_url']);
+            $("#imageLabel").addClass("d-none");
+
+            $('#catSelect > option').each(function() {
+                if($(this).val() == catId){
+                    $(this).attr("selected","selected"); 
+                }
+            });
+
+            $('#productUnit > option').each(function() {
+                if($(this).val() == unit){
+                    $(this).attr("selected","selected"); 
+                }
+            });
 
 
             $("#create-modal").modal('show');
-            $("#update_id").val(id);
-        })
 
-        $('.delete').on('click', function() {
+            // console.log(res.data);
+        });
+
+
+
+        $('.delete').on('click', async function() {
+
             let id = $(this).data('id');
-            let Name = $(this).data('name');
-            // console.log(Name);
-            $(".catName").text(Name);
-            $("#delete-modal").modal('show');
+
+            let res = await axios.post('/singleProduct', {
+                id: id
+            });
+
+
+            let name = res.data['name'];
+            $(".catName").text(name);
             $(".catID").html(id);
-        })
+            $(".filePath").html(res.data['img_url']);
+
+            $("#delete-modal").modal('show');
+
+            
+        });
 
         $('#createProBtn').on('click', function() {
-            // let id = $(this).data('id');
-            // let Name = $(this).data('name');
-            // // console.log(Name);
-            // $(".catName").text(Name);
-            // $("#delete-modal").modal('show');
-            // $(".catID").html(id);
-            ("#oldimgWrapper").addClass("d-none");
-            ("#oldestImg").attr("src","");;
-        })
+            ("imageLabel").removeClass("d-none");
+        });
 
         tableData.DataTable({
-            order: [[0, 'desc']],
+            order:[[0,'desc']],
             lengthMenu: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
             language: {
                 paginate: {

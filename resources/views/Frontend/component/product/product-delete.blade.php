@@ -8,6 +8,9 @@
                 <div class="catID d-none">
 
                 </div>
+                <div class="filePath d-none">
+
+                </div>
             </div>
 
             <!-- Modal footer -->
@@ -31,8 +34,10 @@
     })
     $("#confirmDelete").on("click", async function() {
         let id = $(".catID").html();
+        let file_path = $(".filePath").html();
         let res = await axios.post("/delete-product", {
-            id: id
+            id: id,
+            file_path: file_path
         });
         // console.log(res.data);
         if (res.data.status === "success") {
