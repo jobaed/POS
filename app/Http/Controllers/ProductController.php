@@ -84,7 +84,7 @@ class ProductController extends Controller {
         $user_id = $request->header( 'id' );
         $product_id = $request->input( 'id' );
 
-        $data = Product::where( 'id', '=', $product_id )->where( 'user_id', '=', $user_id );
+        $data = Product::where( 'id', '=', $product_id )->where( 'user_id', '=', $user_id )->first();
 
         if ( $data->count() == 0 ) {
 
@@ -93,6 +93,7 @@ class ProductController extends Controller {
         } else {
 
             if ( $request->file( 'img' ) ) {
+
                 // Prepare File Name & Path
                 $img = $request->file( 'img' );
 
@@ -100,11 +101,12 @@ class ProductController extends Controller {
                 $file_name = $img->getClientOriginalName();
                 $img_name = "{$user_id}-{$t}-{$file_name}";
                 $img_url = "uploads/{$img_name}";
+
                 // Upload File
                 $img->move( public_path( 'uploads' ), $img_name );
 
                 // Dete Old File
-                $old_img = $request->input( 'img' );
+                $old_img = $data->img_url;
                 File::delete( $old_img );
 
                 $data = $data->update( [

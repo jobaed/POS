@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PromotionalMail;
-use App\Models\Invoice;
-use App\Models\InvoiceProduct;
 use Exception;
+use App\Models\Invoice;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use App\Mail\PromotionalMail;
+use App\Models\InvoiceProduct;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -24,6 +25,7 @@ class InvoiceController extends Controller {
             $discount = $request->input( 'discount' );
             $vat = $request->input( 'vat' );
             $customer_id = $request->input( 'customer_id' );
+            $payable = $request->input( 'payable' );
 
             // return $user_id;
 
@@ -33,6 +35,7 @@ class InvoiceController extends Controller {
                 'user_id'     => $user_id,
                 'vat'         => $vat,
                 'customer_id' => $customer_id,
+                'payable' => $payable,
             ] );
 
             $invoice_id = $invoice->id;
@@ -68,26 +71,26 @@ class InvoiceController extends Controller {
     }
 
     function invoiceDetails( Request $request ) {
-        $user_id = $request->header( 'id' );
-        $customer_id = $request->input( 'cus_id' );
-        $invoice_id = $request->input( 'inv_id' );
-        return Invoice::where( 'user_id', $user_id )
-            ->where( 'customer_id', '=', $customer_id )
-            ->where( 'id', '=', $invoice_id )
-            ->with( ['customer', 'invoiceProducts'] )
-            ->get();
+        // $user_id = $request->header( 'id' );
+        // $customer_id = $request->input( 'cus_id' );
+        // $invoice_id = $request->input( 'inv_id' );
+        // return Invoice::where( 'user_id', $user_id )
+        //     ->where( 'customer_id', '=', $customer_id )
+        //     ->where( 'id', '=', $invoice_id )
+        //     ->with( ['customer', 'invoiceProducts'] )
+        //     ->get();
 
         // ALternative
-        // $user_id = $request->header( 'id' );
-        // $customerDetails = Customer::where( 'user_id', $user_id )->where( 'id', $request->input( 'cus_id' ) )->first();
-        // $invoiceTotal = Invoice::where( 'user_id', $user_id )->where( 'id', $request->input( 'inv_id' ) )->first();
-        // $invoiceProduct = InvoiceProduct::where( 'invoice_id', $request->input( 'inv_id' ) )->get();
+        $user_id = $request->header( 'id' );
+        $customerDetails = Customer::where( 'user_id', $user_id )->where( 'id', $request->input( 'cus_id' ) )->first();
+        $invoiceTotal = Invoice::where( 'user_id', $user_id )->where( 'id', $request->input( 'inv_id' ) )->first();
+        $invoiceProduct = InvoiceProduct::with('product')->where( 'invoice_id', $request->input( 'inv_id' ) )->get();
 
-        // return array(
-        //     'customer' => $customerDetails,
-        //     'invoice'  => $invoiceTotal,
-        //     'product'  => $invoiceProduct,
-        // );
+        return array(
+            'customer' => $customerDetails,
+            'invoice'  => $invoiceTotal,
+            'product'  => $invoiceProduct,
+        );
     }
 
     function invoiceDelete( Request $request ) {
@@ -117,5 +120,11 @@ class InvoiceController extends Controller {
     public function invoicePage(){
         return view('Frontend.pages.dashboard.invoice');
     }
+
+    
+
+
+
+   
 
 }

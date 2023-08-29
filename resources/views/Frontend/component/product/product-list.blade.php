@@ -71,7 +71,7 @@
         tableData.DataTable().destroy();
         tableList.empty();
 
-        
+
 
 
         res.data['data'].forEach(function(item, index) {
@@ -93,6 +93,7 @@
         $('.edit').on('click', async function() {
             let id = $(this).data('id');
 
+
             let res = await axios.post('/singleProduct', {
                 id: id
             });
@@ -108,14 +109,14 @@
             $("#imageLabel").addClass("d-none");
 
             $('#catSelect > option').each(function() {
-                if($(this).val() == catId){
-                    $(this).attr("selected","selected"); 
+                if ($(this).val() == catId) {
+                    $(this).attr("selected", "selected");
                 }
             });
 
             $('#productUnit > option').each(function() {
-                if($(this).val() == unit){
-                    $(this).attr("selected","selected"); 
+                if ($(this).val() == unit) {
+                    $(this).attr("selected", "selected");
                 }
             });
 
@@ -143,7 +144,7 @@
 
             $("#delete-modal").modal('show');
 
-            
+
         });
 
         $('#createProBtn').on('click', function() {
@@ -151,7 +152,9 @@
         });
 
         tableData.DataTable({
-            order:[[0,'desc']],
+            order: [
+                [0, 'desc']
+            ],
             lengthMenu: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
             language: {
                 paginate: {

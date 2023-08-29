@@ -16,9 +16,6 @@ class UserController extends Controller {
      * Display a listing of the resource.
      *
      */
-    public function index() {
-        return "Index";
-    }
 
     // For Frontend Pages
     public function loginPage(): View {
@@ -38,10 +35,6 @@ class UserController extends Controller {
     }
 
     // Dashboard Pages
-
-    public function dashboardPage(): View {
-        return view( 'Frontend.pages.dashboard.dashboard' );
-    }
     public function ProfilePage(): View {
         return view( 'Frontend.pages.dashboard.userProfile' );
     }

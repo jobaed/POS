@@ -1,4 +1,4 @@
-<div class="modal" id="create-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal" id="create-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <form id="insertData">
             <div class="modal-content">
@@ -48,7 +48,7 @@
                                 </select>
 
                                 <br />
-                                <img class="w-15" id="newImg" src="{{ asset('images/default.png') }}" />
+                                <img class="w-15" id="newImg" src="{{ asset('images/default.jpg') }}" />
                                 <br />
 
                                 <label class="form-label">Product Image * <span
@@ -83,14 +83,7 @@
         e.preventDefault();
         $('#create-modal').modal('hide');
         document.getElementById('productName').value = '';
-        $("#newImg").attr('src', "images/default.png");
-
-    });
-
-    $('#productUnit').on('click', function() {
-
-
-        // $('#addUnit').removeClass('d-none');
+        $("#newImg").attr('src', "images/default.jpg");
 
     });
 
@@ -99,24 +92,25 @@
         e.preventDefault();
         let update_id = $("#update_id").val();
 
-        if (update_id == "") {
+        let productName = document.getElementById('productName').value;
+        let productCatrgory = document.getElementById('catSelect').value;
+        let productPrice = document.getElementById('productPrice').value;
+        let productUnit = document.getElementById('productUnit').value;
+        let productImg = document.getElementById('productImg');
+        if (productName.length === 0) {
+            errorToast("Product Name Required !")
+        } else if (productCatrgory.length === 0) {
+            errorToast("Product Category Required !")
+        } else if (productPrice.length === 0) {
+            errorToast("Product Price Required !")
+        } else if (productUnit.length === 0) {
+            errorToast("Product Unit Required !")
+        } else if (productImg.value.length === 0) {
+            errorToast("Product Price Required !")
+        } else {
+            if (update_id == "") {
 
-            let productName = document.getElementById('productName').value;
-            let productCatrgory = document.getElementById('catSelect').value;
-            let productPrice = document.getElementById('productPrice').value;
-            let productUnit = document.getElementById('productUnit').value;
-            let productImg = document.getElementById('productImg');
-            if (productName.length === 0) {
-                errorToast("Product Name Required !")
-            } else if (productCatrgory.length === 0) {
-                errorToast("Product Category Required !")
-            } else if (productPrice.length === 0) {
-                errorToast("Product Price Required !")
-            } else if (productUnit.length === 0) {
-                errorToast("Product Unit Required !")
-            } else if (productImg.value.length === 0) {
-                errorToast("Product Price Required !")
-            } else {
+
                 $('#create-modal').modal('hide');
                 showLoader();
                 const imageFile = productImg.files[0];
@@ -152,65 +146,47 @@
                 }
 
 
+
+            } else {
+
+                $('#create-modal').modal('hide');
+
+                const imageFile = productImg.files[0];
+
+
+                const formData = new FormData();
+                formData.append('category_id', productCatrgory);
+                formData.append('name', productName);
+                formData.append('price', productPrice);
+                formData.append('unit', productUnit);
+                formData.append('img', imageFile);
+                formData.append('id', update_id);
+
+
+                try {
+                    showLoader();
+                    const res = await axios.post("/update-product", formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    hideLoader();
+
+                    if (res.data.status == "success") {
+                        successToast('Product Added Successfull');
+                        $("#insertData").trigger("reset");
+                        await getList();
+                    } else if (res.data.status == "error") {
+                        errorToast(res.data.message)
+                    }
+                } catch (error) {
+                    console.error(error);
+                    errorToast(error)
+                }
+
             }
-        } else {
-
-
-
-            let id = document.getElementById('update_id').value;
-
-
-
-            // let productName = document.getElementById('productName').value;
-            // let productCatrgory = document.getElementById('catSelect').value;
-            // let productPrice = document.getElementById('productPrice').value;
-            // let productUnit = document.getElementById('productUnit').value;
-            // let productImg = document.getElementById('productImg');
-            // if (productName.length === 0) {
-            //     errorToast("Product Name Required !")
-            // } else if (productCatrgory.length === 0) {
-            //     errorToast("Product Category Required !")
-            // } else if (productPrice.length === 0) {
-            //     errorToast("Product Price Required !")
-            // } else if (productUnit.length === 0) {
-            //     errorToast("Product Unit Required !")
-            // } else if (productImg.value.length === 0) {
-            //     errorToast("Product Price Required !")
-            // } else {
-
-            //     $('#create-modal').modal('hide');
-
-            //     const imageFile = productImg.files[0];
-
-
-            //     const formData = new FormData();
-            //     formData.append('category_id', productCatrgory);
-            //     formData.append('name', productName);
-            //     formData.append('price', productPrice);
-            //     formData.append('unit', productUnit);
-            //     formData.append('img', imageFile);
-
-            //     try {
-            //         showLoader();
-            //         const res = await axios.post("/create-product", formData, {
-            //             headers: {
-            //                 'Content-Type': 'multipart/form-data',
-            //             },
-            //         });
-            //         hideLoader();
-
-            //         if (res.data.status == "success") {
-            //             successToast('Product Added Successfull');
-            //             $("#insertData").trigger("reset");
-            //             await getList();
-            //         } else if (res.data.status == "error") {
-            //             errorToast(res.data.message)
-            //         }
-            //     } catch (error) {
-            //         console.error(error);
-            //         errorToast(error)
-            //     }
-            // }
         }
+
+
     });
 </script>

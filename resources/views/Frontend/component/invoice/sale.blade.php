@@ -1,4 +1,4 @@
-<style>
+  <style>
     .dataTables_paginate>.pagination>.paginate_button .page-link {
         border: 0px !important;
     }
@@ -63,12 +63,7 @@
                                     step="0.25" onchange="DiscountChange()" class="form-control "
                                     id="discountP" />
                             </div>
-                            <div class="col-md-6">
-                                <span class="text-xxs">Discount(%):</span>
-                                <input onkeydown="return false" value="0" min="0" type="number"
-                                    step="0.25" onchange="DiscountChange()" class="form-control  "
-                                    id="vatP" />
-                            </div>
+                            
                         </div>
 
 
@@ -212,7 +207,6 @@
         let Discount = 0;
         let DefvatPercentage = 0;
         let discountPercentage = (parseFloat(document.getElementById('discountP').value));
-        let vatPercentage = (parseFloat(document.getElementById('vatP').value));
 
         
 
@@ -382,6 +376,7 @@
                 "customer_id":CId,
                 "products":InvoiceItemList
             }
+            console.log(Data);
 
 
             if(CId.length===0){
@@ -396,7 +391,7 @@
                 let res=await axios.post("/create-invoice",Data)
                 hideLoader();
                 if(res.data===1){
-                    successToast("Invoice Created");
+                    successToast("Invoice Created. And Mail Send Successfull");
                     window.location.href='/invoicePage'
                 }
                 else{

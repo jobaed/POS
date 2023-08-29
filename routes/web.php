@@ -1,16 +1,20 @@
-<?php
+  <?php
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionalMailController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AfterLoginMiddleware;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use App\Mail\PromotionalMail;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +26,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
  */
+
+
+
+// Home Route 
+Route::get('/',[HomeController::class,'home']);
+
+
+
 
 
 // User Authentication Pages
@@ -43,7 +55,9 @@ Route::get( '/reset', [UserController::class, 'resetPassPage'] )
 
 
 // Dashboard Pages
-Route::get( '/dashboard', [UserController::class, 'dashboardPage'] )
+Route::get('/dashboard',[DashboardController::class, 'dashboardPage'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+Route::get('/summary',[DashboardController::class, 'Summary'])
     ->middleware( [TokenVerificationMiddleware::class] );
 Route::get( '/profile', [UserController::class, 'ProfilePage'] )
     ->middleware( [TokenVerificationMiddleware::class] );
@@ -260,3 +274,15 @@ Route::post('/details-invoice', [InvoiceController::class, 'invoiceDetails'])
 //  Invoice Delete
 Route::post('/delete-invoice', [InvoiceController::class, 'invoiceDelete'])
     ->middleware( [TokenVerificationMiddleware::class] );
+
+
+
+
+
+
+
+// Report
+Route::get('/report',[ReportController::class, 'reportPage'])
+    ->middleware( [TokenVerificationMiddleware::class] );
+Route::get("/sales-report/{FormDate}/{ToDate}",[ReportController::class,'SalesReport'])
+    ->middleware([TokenVerificationMiddleware::class]);
